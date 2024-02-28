@@ -1,4 +1,4 @@
-const phoneLoaded = async (searchText, isShowAll) =>{
+const phoneLoaded = async (searchText = "samsung", isShowAll) =>{
     const phoneLoad = await fetch(`https://openapi.programming-hero.com/api/phones?search=${searchText}`);
     const data = await phoneLoad.json();
     const phones = data.data;
@@ -29,7 +29,8 @@ const displayPhones = (phones, isShowAll) =>{
     
     phones.forEach(phone =>{
 
-        const {phone_name, image } = phone;
+        const {phone_name, image, slug } = phone;
+        // console.log(phone)
         
         const phoneCard = document.createElement('div');
         phoneCard.classList = `card card-compact bg-gray-200 shadow-xl`;
@@ -38,6 +39,9 @@ const displayPhones = (phones, isShowAll) =>{
             <div class="card-body">
             <h2 class="card-title">${phone_name}</h2>
             <p>If a dog chews shoes whose shoes does he choose?</p>
+            <div class="card-actions mt-3 flex justify-center">
+                <button onclick="handleShowDetails('${slug}')" class="btn btn-outline btn-primary ">Show details</button>
+            </div>
             </div>
             `;
 
@@ -61,3 +65,31 @@ const searchPhone = (isShowAll) =>{
 const handleShowAll = (isShowAll) =>{
     searchPhone(true);
 }
+
+// handle show  details
+const handleShowDetails = async(id)=>{
+    const phone = await fetch(`https://openapi.programming-hero.com/api/phone/${id}`);
+    const data  = await phone.json();
+    handleShowDetailsModal(data.data)
+};
+
+const handleShowDetailsModal = (phoneDetails) =>{
+    const modalContainer = document.getElementById('modal-details');
+    console.log(phoneDetails)
+    const {name, image , slug, mainFeatures} = phoneDetails
+
+    modalContainer.innerHTML = `
+    <img src="${image}" />"
+    <h2 class ='text-3xl'>${name}</h2>
+    <h2 class ='text-xl'>${slug}</h2>
+    <ul>
+        <li>${mainFeatures.displaySize}</li>
+        <li>${mainFeatures?.memory}</li>
+    </ul>
+    `;
+    
+    show_details_modal.showModal();
+}
+
+// 
+phoneLoaded();
