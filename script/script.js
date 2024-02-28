@@ -1,15 +1,15 @@
-const phoneLoaded = async (searchText) =>{
+const phoneLoaded = async (searchText, isShowAll) =>{
     const phoneLoad = await fetch(`https://openapi.programming-hero.com/api/phones?search=${searchText}`);
     const data = await phoneLoad.json();
     const phones = data.data;
-    displayPhones(phones);
+    displayPhones(phones, isShowAll);
 }
 
-const displayPhones = (phones) =>{
-
+const displayPhones = (phones, isShowAll) =>{
+    
     // show all button after the phonesLength 9
     const showAllContainer = document.getElementById('show-all-container');
-    if(phones.length > 9){
+    if(phones.length > 6 && !isShowAll){
         showAllContainer.classList.remove('hidden');
     }
     else{
@@ -17,14 +17,15 @@ const displayPhones = (phones) =>{
     }
     
     // slice the phone length and show the slice phone card
-    phones = phones.slice(0, 9);
+    if(!isShowAll){
+        phones = phones.slice(0, 6);
+    }
 
     const phoneContainer = document.getElementById('phone-container');
     phoneContainer.textContent = '';
     
 
-    // toggle Loader remove class hidden
-    toggleALoader(false);
+    
     
     phones.forEach(phone =>{
 
@@ -37,22 +38,26 @@ const displayPhones = (phones) =>{
             <div class="card-body">
             <h2 class="card-title">${phone_name}</h2>
             <p>If a dog chews shoes whose shoes does he choose?</p>
-            <div class="card-actions justify-end">
-                <button class="btn btn-primary">Buy Now</button>
-            </div>
             </div>
             `;
 
         phoneContainer.appendChild(phoneCard);
     })
+    // toggle Loader remove class hidden
+    toggleALoader(false);
 };
 
 // search phone 
 
-const searchPhone = () =>{
+const searchPhone = (isShowAll) =>{
     toggleALoader(true);
     const searchField = document.getElementById('search-field').value;
-    phoneLoaded(searchField);
+    phoneLoaded(searchField, isShowAll);
 }
 
 
+
+// show all phone
+const handleShowAll = (isShowAll) =>{
+    searchPhone(true);
+}
